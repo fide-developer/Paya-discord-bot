@@ -383,7 +383,7 @@ function startGames(firstRound,msg,listJoin,position,kata){
             loser += `${numLoser}. <@${item.id}> (${item.point})\n`
         }else{
             numPlayer++
-            players += `${numPlayer}. <@${item.id}> (${item.point}) 🎲x${item.reRoll} ❤️x${item.life}`
+            players += `${numPlayer}. <@${item.id}> (${item.point}) 🎲x${item.reRoll} ❤️x${item.life}\n`
         }
     })
     if(numLoser == 0) loser = "-"
@@ -547,7 +547,7 @@ function startGames(firstRound,msg,listJoin,position,kata){
                 author: {
                     name: "Paya sambung kata 💦"
                 },
-                title: "Kata sebelumnya **"+kata.kata.toUpperCase()+"**, lanjutkan dengan kata yang berawalan **"+kata.last_sukuKata.toUpperCase+"**",
+                title: "Kata sebelumnya **"+kata.kata.toUpperCase()+"**, lanjutkan dengan kata yang berawalan **"+kata.last_sukuKata.toUpperCase()+"**",
                 description: kata.desc+"\n*sumber: kateglo.com*",
                     fields: [{
                         name: "Daftar pemain aktif",
