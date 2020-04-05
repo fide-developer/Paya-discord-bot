@@ -176,7 +176,7 @@ function initGames(msg){
                     listJoin.forEach(item=>{
                         num++
                         let emot = ""
-                        if(item.status)emot = "✅"
+                        if(item.ready)emot = "✅"
                         players += num+". <@"+item.id+"> "+emot+"\n"
                     })
                     
@@ -337,10 +337,9 @@ function initGames(msg){
                     if(listJoin.length > 1){
                         let ready = true
                         listJoin.forEach(item=>{
-                            num++
-                            let emot = ""
                             if(!item.ready)ready = false
                         })
+                        
                         if(ready){
                             collector.stop()
                             startGames(true,msg,listJoin,0,{})
