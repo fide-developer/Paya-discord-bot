@@ -177,7 +177,7 @@ function initGames(msg){
                         num++
                         let emot = ""
                         if(item.ready)emot = "✅"
-                        players += num+". <@"+item.id+"> "+emot+"\n"
+                        players += num+". <@!"+item.id+"> "+emot+"\n"
                     })
                     
                     resp.edit({embed: {
@@ -286,7 +286,7 @@ function initGames(msg){
                         num++
                         let emot = ""
                         if(item.ready)emot = "✅"
-                        players += num+". <@"+item.id+"> "+emot+"\n"
+                        players += num+". <@!"+item.id+"> "+emot+"\n"
                     })
     
                     if(listJoin.length == 0 && !deleteYet) {
@@ -380,10 +380,10 @@ function startGames(firstRound,msg,listJoin,position,kata){
     listJoin.forEach(item=>{
         if(item.life == 0){
             numLoser++
-            loser += `${numLoser}. <@${item.id}> (${item.point})\n`
+            loser += `${numLoser}. <@!${item.id}> (${item.point})\n`
         }else{
             numPlayer++
-            players += `${numPlayer}. <@${item.id}> (${item.point}) 🎲x${item.reRoll} ❤️x${item.life}\n`
+            players += `${numPlayer}. <@!${item.id}> (${item.point}) 🎲x${item.reRoll} ❤️x${item.life}\n`
         }
     })
     if(numLoser == 0) loser = "-"
@@ -427,7 +427,12 @@ function startGames(firstRound,msg,listJoin,position,kata){
                         listJoin[position].life--
                     }
                     resp.delete()
-                    startGames(false,msg,listJoin,0,kata)
+                    if(position == listJoin.length-1){
+                        position = 0
+                    }else{
+                        position++
+                    }
+                    startGames(false,msg,listJoin,position,kata)
                 }
             });
             MessCollector.on('collect', m => {
@@ -545,7 +550,7 @@ function startGames(firstRound,msg,listJoin,position,kata){
             msg.channel.send({embed: {
                 color: 'FF69B4',
                 author: {
-                    name: "Paya sambung kata 💦"
+                    name: "Paya sambung kata 💦 - Giliran <@!"+listJoin[position]+">"
                 },
                 title: "Kata sebelumnya **"+kata.kata.toUpperCase()+"**, lanjutkan dengan kata yang berawalan **"+kata.last_sukuKata.toUpperCase()+"**",
                 description: kata.desc+"\n*sumber: kateglo.com*",
@@ -608,10 +613,16 @@ function startGames(firstRound,msg,listJoin,position,kata){
                                 listJoin[position].point += -5
                             }
                             resp.delete()
-                            startGames(false,msg,listJoin,position++,kata)
+                            if(position == listJoin.length-1){
+                                position = 0
+                            }else{
+                                position++
+                            }
+                            startGames(false,msg,listJoin,position,kata)
                         }
                     }else{
                         resp.delete()
+
                         startGames(false,msg,listJoin,position,kata)
                     }
                 });
@@ -662,7 +673,12 @@ function startGames(firstRound,msg,listJoin,position,kata){
                                         correct = true
                                         MessCollector.stop()
                                     }else{
-                                        startGames(false,msg,listJoin,position++,kata)
+                                        if(position == listJoin.length-1){
+                                            position = 0
+                                        }else{
+                                            position++
+                                        }
+                                        startGames(false,msg,listJoin,position,kata)
                                     }
                                 }
                             }else{
