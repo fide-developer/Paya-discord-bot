@@ -383,7 +383,11 @@ function startGames(firstRound,msg,listJoin,position,kata){
             loser += `${numLoser}. <@!${item.id}> (${item.point})\n`
         }else{
             numPlayer++
-            players += `${numPlayer}. <@!${item.id}> (${item.point}) 🎲x${item.reRoll} ❤️x${item.life}\n`
+            if(item.id === listJoin[position].id){
+                players += `🔸 ${numPlayer}. <@!${item.id}> [${item.point}] 🎲x${item.reRoll} ❤️x${item.life}\n`
+            }else{
+                players += `   ${numPlayer}. <@!${item.id}> [${item.point}] 🎲x${item.reRoll} ❤️x${item.life}\n`
+            }
         }
     })
     if(numLoser == 0) loser = "-"
@@ -431,6 +435,10 @@ function startGames(firstRound,msg,listJoin,position,kata){
                         position = 0
                     }else{
                         position++
+                        let starts = position
+                        for(let i = starts;i<listJoin.length;i++){
+                            if(listJoin[position].life == 0 && position != listJoin.length-1) position++
+                        }
                     }
                     startGames(false,msg,listJoin,position,kata)
                 }
@@ -481,6 +489,7 @@ function startGames(firstRound,msg,listJoin,position,kata){
                                         desc: description,
                                         point: response.data.kateglo.phrase.split("").length
                                     }
+                                    listJoin[position].point = kata.point
                                     dbclient.insert(kata)
                                     if(!endgame){
                                         correct = true
@@ -554,13 +563,14 @@ function startGames(firstRound,msg,listJoin,position,kata){
                 }
             })
         }else{
+            let texts = kata.last_sukuKata+" ..."
             msg.channel.send({embed: {
                 color: 'FF69B4',
                 author: {
                     name: "Paya sambung kata 💦"
                 },
-                title: "'**"+kata.kata.toUpperCase()+"**', lanjutkan dengan awalan **"+kata.last_sukuKata.toUpperCase()+"**",
-                description: kata.desc+"\n*sumber: kateglo.com*",
+                title: "'**"+kata.kata.toUpperCase()+"  **+"+kata.point+"**",
+                description: kata.desc+"* (sumber: kateglo.com*)",
                     fields: [{
                         name: "Daftar pemain aktif",
                         value: players
@@ -572,8 +582,8 @@ function startGames(firstRound,msg,listJoin,position,kata){
                     ],
                     timestamp: new Date(),
                     footer: {
-                        icon_url: "https://i.imgur.com/Kz3cnHQ.gif",
-                        text: "Giliran <@!"+listJoin[position]+">"
+                        icon_url: "https://i.imgur.com/CrTiFYg.gif",
+                        text: texts
                     }
                 }
             }).then(resp => {
@@ -621,10 +631,15 @@ function startGames(firstRound,msg,listJoin,position,kata){
                                 //listJoin[position].point += -5
                             }
                             resp.delete()
+                            
                             if(position == listJoin.length-1){
                                 position = 0
                             }else{
                                 position++
+                                let starts = position
+                                for(let i = starts;i<listJoin.length;i++){
+                                    if(listJoin[position].life == 0 && position != listJoin.length-1) position++
+                                }
                             }
                             startGames(false,msg,listJoin,position,kata)
                         }
@@ -685,6 +700,10 @@ function startGames(firstRound,msg,listJoin,position,kata){
                                             position = 0
                                         }else{
                                             position++
+                                            let starts = position
+                                            for(let i = starts;i<listJoin.length;i++){
+                                                if(listJoin[position].life == 0 && position != listJoin.length-1) position++
+                                            }
                                         }
                                         startGames(false,msg,listJoin,position,kata)
                                     }
@@ -695,7 +714,16 @@ function startGames(firstRound,msg,listJoin,position,kata){
                                 }else{
                                     listJoin[position].life--
                                     //listJoin[position].point += -5
-                                    MessCollector.stop()
+                                    if(position == listJoin.length-1){
+                                        position = 0
+                                    }else{
+                                        position++
+                                        let starts = position
+                                        for(let i = starts;i<listJoin.length;i++){
+                                            if(listJoin[position].life == 0 && position != listJoin.length-1) position++
+                                        }
+                                    }
+                                    startGames(false,msg,listJoin,position,kata)
                                 }
                             }
                         })
