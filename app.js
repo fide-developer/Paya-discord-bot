@@ -120,10 +120,10 @@ function initGames(msg){
             icon_url: client.user.avatarURL
         },
         title: "Paya sambung kata (PSK) 💦",
-        description: "PSK (Paya sambung kata) aja ya! jangan PSK yang lain !!\nTekan 👍 untuk ikutan, ✅ menandakan sudah siap, dan ▶️ untuk memulai game! \n\n Pastikan baca terlebih dahulu panduannya yaa sayang :wink:",
+        description: "PSK (Paya sambung kata) aja ya! jangan PSK yang lain !!\nTekan 👍 untuk ikutan, 🚫 untuk keluar room, dan ▶️ untuk memulai game! \n\n Pastikan baca terlebih dahulu panduannya yaa sayang :wink:",
             fields: [{
                 name: "Daftar pemain",
-                value: "1. <@"+msg.member.id+">"
+                value: "1. <@"+msg.member.id+"> ✅"
             },
             // {
             //     name: "peraturan",
@@ -153,7 +153,7 @@ function initGames(msg){
             resp.react('🚫')
             let userID
             const filter = (reaction, user) => {
-                if((reaction.emoji.name === '▶️' || reaction.emoji.name === '👍' || reaction.emoji.name === '✅' || reaction.emoji.name === '🚫' )&& !(user.id===client.user.id)){
+                if((reaction.emoji.name === '▶️' || reaction.emoji.name === '👍' || reaction.emoji.name === '🚫' )&& !(user.id===client.user.id)){
                     userID = user.id
                     return true
                 }else{
@@ -167,6 +167,7 @@ function initGames(msg){
             let players =" "
             
                 if(reaction.emoji.name === "👍") {
+                    players = " "
                     listJoin = joinGames(msg,listJoin,userID)
                     if(listJoin.length>1){
                         resp.react('▶️')
@@ -186,21 +187,21 @@ function initGames(msg){
                             icon_url: client.user.avatarURL
                         },
                         title: "Paya sambung kata (PSK) 💦",
-                        description: "PSK (Paya sambung kata) aja ya! jangan PSK yang lain !!\nTekan 👍 untuk ikutan, ✅ menandakan sudah siap, dan ▶️ untuk memulai game! \n\n Pastikan baca terlebih dahulu panduannya yaa sayang :wink:",
+                        description: "PSK (Paya sambung kata) aja ya! jangan PSK yang lain !!\nTekan 👍 untuk ikutan, 🚫 untuk keluar room, dan ▶️ untuk memulai game! \n\n Pastikan baca terlebih dahulu panduannya yaa sayang :wink:",
                             fields: [{
                                 name: "Daftar pemain",
                                 value: players
                             },
-                            {
-                                name: "peraturan",
-                                value: "1. Kata yang sudah digunakan tidak dapat digunakan kembali."
-                                        +"\n 2. Setiap pemain memiliki 5 nyawa."
-                                        +"\n 3. Setiap pemain diberikan kesempatan untuk melakukan re-roll kata masing-masing sebanyak 3x dengan biaya 5 poin."
-                                        +"\n 4. Setiap pemain diberikan waktu untuk melanjutkan kata selama 20 detik pada setiap giliran."
-                                        +"\n 5. Jika waktu yang diberikan telah habis dan pemain tidak dapat melanjutkan kata, maka soal akan di re-roll untuk dilanjutkan oleh peserta berikutnya. Dan pemain tersebut akan kehilangan 1 nyawa"
-                                        +"\n 6. Pemain akan dinyatakan gugur jika sudah tidak memiliki nyawa."
-                                        +"\n 7. Jika semua pemain telah gugur atau hanya tersisa 1 pemain. Maka pemenang akan ditentukan berdasarkan kumulatif perolehan koin terbanyak!"
-                            },
+                            // {
+                            //     name: "peraturan",
+                            //     value: "1. Kata yang sudah digunakan tidak dapat digunakan kembali."
+                            //             +"\n 2. Setiap pemain memiliki 5 nyawa."
+                            //             +"\n 3. Setiap pemain diberikan kesempatan untuk melakukan re-roll kata masing-masing sebanyak 3x dengan biaya 5 poin."
+                            //             +"\n 4. Setiap pemain diberikan waktu untuk melanjutkan kata selama 20 detik pada setiap giliran."
+                            //             +"\n 5. Jika waktu yang diberikan telah habis dan pemain tidak dapat melanjutkan kata, maka soal akan di re-roll untuk dilanjutkan oleh peserta berikutnya. Dan pemain tersebut akan kehilangan 1 nyawa"
+                            //             +"\n 6. Pemain akan dinyatakan gugur jika sudah tidak memiliki nyawa."
+                            //             +"\n 7. Jika semua pemain telah gugur atau hanya tersisa 1 pemain. Maka pemenang akan ditentukan berdasarkan kumulatif perolehan koin terbanyak!"
+                            // },
                             ],
                             timestamp: new Date(),
                             footer: {
@@ -307,21 +308,21 @@ function initGames(msg){
                                 icon_url: client.user.avatarURL
                             },
                             title: "Paya sambung kata (PSK) 💦",
-                            description: "PSK (Paya sambung kata) aja ya! jangan PSK yang lain !!\nTekan 👍 untuk ikutan, ✅ menandakan sudah siap, dan ▶️ untuk memulai game! \n\n Pastikan baca terlebih dahulu panduannya yaa sayang :wink:",
+                            description: "PSK (Paya sambung kata) aja ya! jangan PSK yang lain !!\nTekan 👍 untuk ikutan, 🚫 untuk keluar room dan ▶️ untuk memulai game! \n\n Pastikan baca terlebih dahulu panduannya yaa sayang :wink:",
                                 fields: [{
                                     name: "Daftar pemain",
                                     value: players
                                 },
-                                {
-                                    name: "peraturan",
-                                    value: "1. Kata yang sudah digunakan tidak dapat digunakan kembali."
-                                            +"\n 2. Setiap pemain memiliki 5 nyawa."
-                                            +"\n 3. Setiap pemain diberikan kesempatan untuk melakukan re-roll kata masing-masing sebanyak 3x dengan biaya 5 poin."
-                                            +"\n 4. Setiap pemain diberikan waktu untuk melanjutkan kata selama 20 detik pada setiap giliran."
-                                            +"\n 5. Jika waktu yang diberikan telah habis dan pemain tidak dapat melanjutkan kata, maka soal akan di re-roll untuk dilanjutkan oleh peserta berikutnya. Dan pemain tersebut akan kehilangan 1 nyawa"
-                                            +"\n 6. Pemain akan dinyatakan gugur jika sudah tidak memiliki nyawa."
-                                            +"\n 7. Jika semua pemain telah gugur atau hanya tersisa 1 pemain. Maka pemenang akan ditentukan berdasarkan kumulatif perolehan koin terbanyak!"
-                                },
+                                // {
+                                //     name: "peraturan",
+                                //     value: "1. Kata yang sudah digunakan tidak dapat digunakan kembali."
+                                //             +"\n 2. Setiap pemain memiliki 5 nyawa."
+                                //             +"\n 3. Setiap pemain diberikan kesempatan untuk melakukan re-roll kata masing-masing sebanyak 3x dengan biaya 5 poin."
+                                //             +"\n 4. Setiap pemain diberikan waktu untuk melanjutkan kata selama 20 detik pada setiap giliran."
+                                //             +"\n 5. Jika waktu yang diberikan telah habis dan pemain tidak dapat melanjutkan kata, maka soal akan di re-roll untuk dilanjutkan oleh peserta berikutnya. Dan pemain tersebut akan kehilangan 1 nyawa"
+                                //             +"\n 6. Pemain akan dinyatakan gugur jika sudah tidak memiliki nyawa."
+                                //             +"\n 7. Jika semua pemain telah gugur atau hanya tersisa 1 pemain. Maka pemenang akan ditentukan berdasarkan kumulatif perolehan koin terbanyak!"
+                                // },
                                 ],
                                 timestamp: new Date(),
                                 footer: {
