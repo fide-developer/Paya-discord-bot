@@ -519,10 +519,17 @@ function startGames(firstRound,msg,listJoin,position,kata){
         if(numPlayer == 1){
             var winner
             var maxPoint = 0
+            let counter = 0
             listJoin.forEach(pl => {
-                if(pl.point >= maxPoint) {
+                counter++
+                if(counter == 1){
                     maxPoint = pl.point
                     winner = pl.id
+                }else{
+                    if(pl.point >= maxPoint) {
+                        maxPoint = pl.point
+                        winner = pl.id
+                    }
                 }
                 let index = listPlayer.indexOf(pl.id);
                 if (index !== -1) listPlayer.splice(index, 1)
@@ -550,7 +557,7 @@ function startGames(firstRound,msg,listJoin,position,kata){
             msg.channel.send({embed: {
                 color: 'FF69B4',
                 author: {
-                    name: "Paya sambung kata 💦 - Giliran <@!"+listJoin[position]+">"
+                    name: "Paya sambung kata 💦"
                 },
                 title: "'**"+kata.kata.toUpperCase()+"**', lanjutkan dengan awalan **"+kata.last_sukuKata.toUpperCase()+"**",
                 description: kata.desc+"\n*sumber: kateglo.com*",
@@ -566,7 +573,7 @@ function startGames(firstRound,msg,listJoin,position,kata){
                     timestamp: new Date(),
                     footer: {
                         icon_url: "https://i.imgur.com/Kz3cnHQ.gif",
-                        text: "Jawab sebelum waktu habis!"
+                        text: "Giliran <@!"+listJoin[position]+">"
                     }
                 }
             }).then(resp => {
