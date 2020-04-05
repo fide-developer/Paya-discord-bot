@@ -10,7 +10,7 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 
 //const for setup the game
-const initiategame = "psk init";
+const initiategame = "psk mulai";
 const joingame = "psk join";
 const startgame = "psk start";
 const endgame = "psk end";
@@ -80,7 +80,7 @@ function joinGames(msg,listJoin, id) {
             life:5,
             reRoll:3,
             point:0,
-            ready:false
+            ready:true
         });
         
     }else{
@@ -125,16 +125,16 @@ function initGames(msg){
                 name: "Daftar pemain",
                 value: "1. <@"+msg.member.id+">"
             },
-            {
-                name: "peraturan",
-                value: "1. Kata yang sudah digunakan tidak dapat digunakan kembali."
-                        +"\n 2. Setiap pemain memiliki 5 nyawa."
-                        +"\n 3. Setiap pemain diberikan kesempatan untuk melakukan re-roll kata masing-masing sebanyak 3x dengan biaya 5 poin."
-                        +"\n 4. Setiap pemain diberikan waktu untuk melanjutkan kata selama 20 detik pada setiap giliran."
-                        +"\n 5. Jika waktu yang diberikan telah habis dan pemain tidak dapat melanjutkan kata, maka soal akan di re-roll untuk dilanjutkan oleh peserta berikutnya. Dan pemain tersebut akan kehilangan 1 nyawa"
-                        +"\n 6. Pemain akan dinyatakan gugur jika sudah tidak memiliki nyawa."
-                        +"\n 7. Jika semua pemain telah gugur atau hanya tersisa 1 pemain. Maka pemenang akan ditentukan berdasarkan kumulatif perolehan koin terbanyak!"
-            },
+            // {
+            //     name: "peraturan",
+            //     value: "1. Kata yang sudah digunakan tidak dapat digunakan kembali."
+            //             +"\n 2. Setiap pemain memiliki 5 nyawa."
+            //             +"\n 3. Setiap pemain diberikan kesempatan untuk melakukan re-roll kata masing-masing sebanyak 3x dengan biaya 5 poin."
+            //             +"\n 4. Setiap pemain diberikan waktu untuk melanjutkan kata selama 20 detik pada setiap giliran."
+            //             +"\n 5. Jika waktu yang diberikan telah habis dan pemain tidak dapat melanjutkan kata, maka soal akan di re-roll untuk dilanjutkan oleh peserta berikutnya. Dan pemain tersebut akan kehilangan 1 nyawa"
+            //             +"\n 6. Pemain akan dinyatakan gugur jika sudah tidak memiliki nyawa."
+            //             +"\n 7. Jika semua pemain telah gugur atau hanya tersisa 1 pemain. Maka pemenang akan ditentukan berdasarkan kumulatif perolehan koin terbanyak!"
+            // },
             ],
             timestamp: new Date(),
             footer: {
@@ -149,7 +149,7 @@ function initGames(msg){
         if(!deleteYet){
             
             resp.react('👍')
-            resp.react('✅')
+            //resp.react('✅')
             resp.react('🚫')
             let userID
             const filter = (reaction, user) => {
@@ -210,65 +210,65 @@ function initGames(msg){
                         }
                     })
                 }
-                if(reaction.emoji.name === "✅"){
-                    let userId = userID
-                    let count = 0
-                    let cursor = 0
-                    let ada = false;
+                // if(reaction.emoji.name === "✅"){
+                //     let userId = userID
+                //     let count = 0
+                //     let cursor = 0
+                //     let ada = false;
                     
-                    listJoin.forEach(item => {
-                        if(item.id === userId) {
-                            cursor = count
-                            ada = true
-                        }
-                        count++
-                    })
-                    if(ada) {
-                        listJoin[cursor].ready = !listJoin[cursor].ready
-                    }else{
-                        //remove the fuckin react
-                        return
-                    }
+                //     listJoin.forEach(item => {
+                //         if(item.id === userId) {
+                //             cursor = count
+                //             ada = true
+                //         }
+                //         count++
+                //     })
+                //     if(ada) {
+                //         listJoin[cursor].ready = true
+                //     }else{
+                //         //remove the fuckin react
+                //         return
+                //     }
                     
-                    let num = 0
-                        listJoin.forEach(item=>{
-                            num++
-                            let emot = ""
-                            if(item.ready)emot = "✅"
-                            players += num+". <@"+item.id+"> "+emot+"\n"
-                        })
+                //     let num = 0
+                //         listJoin.forEach(item=>{
+                //             num++
+                //             let emot = ""
+                //             if(item.ready)emot = "✅"
+                //             players += num+". <@"+item.id+"> "+emot+"\n"
+                //         })
     
-                    resp.edit({embed: {
-                        color: 'FF69B4',
-                        author: {
-                            name: "Thanks to p.cates who create this bot day and night!",
-                            icon_url: client.user.avatarURL
-                        },
-                        title: "Paya sambung kata (PSK) 💦",
-                        description: "PSK (Paya sambung kata) aja ya! jangan PSK yang lain !!\nTekan 👍 untuk ikutan, ✅ menandakan sudah siap, dan ▶️ untuk memulai game! \n\n Pastikan baca terlebih dahulu panduannya yaa sayang :wink:",
-                            fields: [{
-                                name: "Daftar pemain",
-                                value: players
-                            },
-                            {
-                                name: "peraturan",
-                                value: "1. Kata yang sudah digunakan tidak dapat digunakan kembali."
-                                        +"\n 2. Setiap pemain memiliki 5 nyawa."
-                                        +"\n 3. Setiap pemain diberikan kesempatan untuk melakukan re-roll kata masing-masing sebanyak 3x dengan biaya 5 poin."
-                                        +"\n 4. Setiap pemain diberikan waktu untuk melanjutkan kata selama 20 detik pada setiap giliran."
-                                        +"\n 5. Jika waktu yang diberikan telah habis dan pemain tidak dapat melanjutkan kata, maka soal akan di re-roll untuk dilanjutkan oleh peserta berikutnya. Dan pemain tersebut akan kehilangan 1 nyawa"
-                                        +"\n 6. Pemain akan dinyatakan gugur jika sudah tidak memiliki nyawa."
-                                        +"\n 7. Jika semua pemain telah gugur atau hanya tersisa 1 pemain. Maka pemenang akan ditentukan berdasarkan kumulatif perolehan koin terbanyak!"
-                            },
-                            ],
-                            timestamp: new Date(),
-                            footer: {
-                                icon_url: client.user.avatarURL,
-                                text: "© p.cates developer"
-                            }
-                        }
-                    })
-                }
+                //     resp.edit({embed: {
+                //         color: 'FF69B4',
+                //         author: {
+                //             name: "Thanks to p.cates who create this bot day and night!",
+                //             icon_url: client.user.avatarURL
+                //         },
+                //         title: "Paya sambung kata (PSK) 💦",
+                //         description: "PSK (Paya sambung kata) aja ya! jangan PSK yang lain !!\nTekan 👍 untuk ikutan, ✅ menandakan sudah siap, dan ▶️ untuk memulai game! \n\n Pastikan baca terlebih dahulu panduannya yaa sayang :wink:",
+                //             fields: [{
+                //                 name: "Daftar pemain",
+                //                 value: players
+                //             },
+                //             {
+                //                 name: "peraturan",
+                //                 value: "1. Kata yang sudah digunakan tidak dapat digunakan kembali."
+                //                         +"\n 2. Setiap pemain memiliki 5 nyawa."
+                //                         +"\n 3. Setiap pemain diberikan kesempatan untuk melakukan re-roll kata masing-masing sebanyak 3x dengan biaya 5 poin."
+                //                         +"\n 4. Setiap pemain diberikan waktu untuk melanjutkan kata selama 20 detik pada setiap giliran."
+                //                         +"\n 5. Jika waktu yang diberikan telah habis dan pemain tidak dapat melanjutkan kata, maka soal akan di re-roll untuk dilanjutkan oleh peserta berikutnya. Dan pemain tersebut akan kehilangan 1 nyawa"
+                //                         +"\n 6. Pemain akan dinyatakan gugur jika sudah tidak memiliki nyawa."
+                //                         +"\n 7. Jika semua pemain telah gugur atau hanya tersisa 1 pemain. Maka pemenang akan ditentukan berdasarkan kumulatif perolehan koin terbanyak!"
+                //             },
+                //             ],
+                //             timestamp: new Date(),
+                //             footer: {
+                //                 icon_url: client.user.avatarURL,
+                //                 text: "© p.cates developer"
+                //             }
+                //         }
+                //     })
+                // }
                 if(reaction.emoji.name === "🚫"){
                     let userId = userID
                     
@@ -343,6 +343,8 @@ function initGames(msg){
                         if(ready){
                             collector.stop()
                             startGames(true,msg,listJoin,0,{})
+                        }else{
+                            msg.channel.send("Pastikan semua player sudah ready ya!").then(r => r.delete({timeout:5000}));
                         }
                     }
                 }
