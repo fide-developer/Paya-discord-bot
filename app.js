@@ -120,7 +120,7 @@ function initGames(msg){
             icon_url: client.user.avatarURL
         },
         title: "Paya sambung kata (PSK) 💦",
-        description: "PSK (Paya sambung kata) aja ya! jangan PSK yang lain !!\nTekan 👍 untuk ikutan, 🚫 untuk keluar room, dan ▶️ untuk memulai game! \n\n Pastikan baca terlebih dahulu panduannya yaa sayang :wink:",
+        description: "PSK (Paya sambung kata) aja ya! jangan PSK yang lain !!\nTekan 👍 untuk ikutan, 🚫 untuk keluar room, dan ▶️ untuk memulai game!",
             fields: [{
                 name: "Daftar pemain",
                 value: "1. <@"+msg.member.id+"> ✅"
@@ -187,7 +187,7 @@ function initGames(msg){
                             icon_url: client.user.avatarURL
                         },
                         title: "Paya sambung kata (PSK) 💦",
-                        description: "PSK (Paya sambung kata) aja ya! jangan PSK yang lain !!\nTekan 👍 untuk ikutan, 🚫 untuk keluar room, dan ▶️ untuk memulai game! \n\n Pastikan baca terlebih dahulu panduannya yaa sayang :wink:",
+                        description: "PSK (Paya sambung kata) aja ya! jangan PSK yang lain !!\nTekan 👍 untuk ikutan, 🚫 untuk keluar room, dan ▶️ untuk memulai game!",
                             fields: [{
                                 name: "Daftar pemain",
                                 value: players
@@ -308,7 +308,7 @@ function initGames(msg){
                                 icon_url: client.user.avatarURL
                             },
                             title: "Paya sambung kata (PSK) 💦",
-                            description: "PSK (Paya sambung kata) aja ya! jangan PSK yang lain !!\nTekan 👍 untuk ikutan, 🚫 untuk keluar room dan ▶️ untuk memulai game! \n\n Pastikan baca terlebih dahulu panduannya yaa sayang :wink:",
+                            description: "PSK (Paya sambung kata) aja ya! jangan PSK yang lain !!\nTekan 👍 untuk ikutan, 🚫 untuk keluar room dan ▶️ untuk memulai game!",
                                 fields: [{
                                     name: "Daftar pemain",
                                     value: players
@@ -552,7 +552,7 @@ function startGames(firstRound,msg,listJoin,position,kata){
                 author: {
                     name: "Paya sambung kata 💦 - Giliran <@!"+listJoin[position]+">"
                 },
-                title: "Kata sebelumnya **"+kata.kata.toUpperCase()+"**, lanjutkan dengan kata yang berawalan **"+kata.last_sukuKata.toUpperCase()+"**",
+                title: "'**"+kata.kata.toUpperCase()+"**', lanjutkan dengan awalan **"+kata.last_sukuKata.toUpperCase()+"**",
                 description: kata.desc+"\n*sumber: kateglo.com*",
                     fields: [{
                         name: "Daftar pemain aktif",
@@ -566,7 +566,7 @@ function startGames(firstRound,msg,listJoin,position,kata){
                     timestamp: new Date(),
                     footer: {
                         icon_url: "https://i.imgur.com/Kz3cnHQ.gif",
-                        text: "Lanjutkan kata sebelum waktu habis! - © p.cates developer"
+                        text: "Jawab sebelum waktu habis!"
                     }
                 }
             }).then(resp => {
@@ -597,6 +597,7 @@ function startGames(firstRound,msg,listJoin,position,kata){
                     }
                     reroll = true
                     MessCollector.stop()
+                    listJoin[position].point += -5
                     collector.stop()
                 })
                 const filter = m => {
@@ -610,7 +611,7 @@ function startGames(firstRound,msg,listJoin,position,kata){
                         if(!pending){
                             if(!correct){
                                 listJoin[position].life--
-                                listJoin[position].point += -5
+                                //listJoin[position].point += -5
                             }
                             resp.delete()
                             if(position == listJoin.length-1){
@@ -686,7 +687,7 @@ function startGames(firstRound,msg,listJoin,position,kata){
                                     m.reply("Maaf kata tidak ditemukan").then(ms=> ms.delete({timeout:2000}))
                                 }else{
                                     listJoin[position].life--
-                                    listJoin[position].point += -5
+                                    //listJoin[position].point += -5
                                     MessCollector.stop()
                                 }
                             }
