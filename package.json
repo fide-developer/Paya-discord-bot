@@ -13,6 +13,8 @@
   "author": "Fadjar Firdaus",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^12.1.1"
+    "axios": "^0.19.2",
+    "discord.js": "^12.1.1",
+    "sqlite3": "^4.1.1"
   }
 }
