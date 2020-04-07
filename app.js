@@ -51,11 +51,11 @@ client.on("message", msg => {
                 if(inCommand.length > 1 && inCommand[0].toLowerCase() === "psk"){
                     if(inCommand.length <= 2){
                         if(!(inCommand[0].toLowerCase() === "init" || inCommand[0].toLowerCase() === "join" || inCommand[0].toLowerCase() === "start" || inCommand[0].toLowerCase() === "ampun" || inCommand[0].toLowerCase() === "end" )){
-                            msg.channel.send("Maaf sayang, aku ga ngerti nih! (~,~)");
+                            msg.channel.send("Maaf sayang, aku ga ngerti nih! (~,~)").then(r=>r.delete({timeout:1500}));
                             break;
                         }
                     }else{
-                        msg.channel.send("Maaf sayang, aku ga ngerti nih! (~,~)");
+                        msg.channel.send("Maaf sayang, aku ga ngerti nih! (~,~)").then(r=>{r.delete({timeout:1500})});
                         break;
                     }
                 }
@@ -77,7 +77,7 @@ function joinGames(msg,listJoin, id) {
         listPlayer.push(id);
         listJoin.push({
             id: id,
-            life:5,
+            life:3,
             reRoll:3,
             point:0,
             ready:true
@@ -342,7 +342,7 @@ function initGames(msg){
                         
                         if(ready){
                             collector.stop()
-                            startGames(true,msg,listJoin,0,{})
+                            startGames(true,msg,listJoin,0,{},[])
                         }else{
                             msg.channel.send("Pastikan semua player sudah ready ya!").then(r => r.delete({timeout:5000}));
                         }
@@ -366,7 +366,7 @@ function initGames(msg){
     }).catch(error=>console.log(error));
 }
 
-function startGames(firstRound,msg,listJoin,position,kata){
+function startGames(firstRound,msg,listJoin,position,kata,listKata){
     let correct = false
     let pending = false
     let endgame = false
@@ -376,6 +376,13 @@ function startGames(firstRound,msg,listJoin,position,kata){
     var loser = ""
     let numPlayer = 0
     let numLoser = 0
+    var giliran = ""
+
+    if(firstRound){
+        let mulaiKata = Math.floor(Math.random() * listJoin.length);
+        position = mulaiKata
+        time = {}
+    }
 
     listJoin.forEach(item=>{
         if(item.life == 0){
@@ -384,19 +391,14 @@ function startGames(firstRound,msg,listJoin,position,kata){
         }else{
             numPlayer++
             if(item.id === listJoin[position].id){
-                players += `🔸 ${numPlayer}. <@!${item.id}> [${item.point}] 🎲x${item.reRoll} ❤️x${item.life}\n`
+                giliran += `${numPlayer}. <@!${item.id}> [${item.point}] 🎲x${item.reRoll} ❤️x${item.life}\n`
             }else{
-                players += `   ${numPlayer}. <@!${item.id}> [${item.point}] 🎲x${item.reRoll} ❤️x${item.life}\n`
+                players += `${numPlayer}. <@!${item.id}> [${item.point}] 🎲x${item.reRoll} ❤️x${item.life}\n`
             }
         }
     })
     if(numLoser == 0) loser = "-"
     
-    if(firstRound){
-        let mulaiKata = Math.floor(Math.random() * listJoin.length);
-        position = mulaiKata
-        time = {}
-    }
     if(firstRound){
         msg.channel.send({embed: {
             color: 'FF69B4',
@@ -406,6 +408,10 @@ function startGames(firstRound,msg,listJoin,position,kata){
             title: "Game dimulai!! ",
             description: "Karena ini game pertama, <@"+listJoin[position].id+"> kamu bebas sebutin kata yang kamu mau! (Paling sedikit 4 huruf)",
                 fields: [{
+                    name: "Giliran",
+                    value: giliran
+                },
+                {
                     name: "Daftar pemain aktif",
                     value: players
                 }
@@ -429,6 +435,7 @@ function startGames(firstRound,msg,listJoin,position,kata){
                 if(!pending){
                     if(!correct){
                         listJoin[position].life--
+                        listJoin[position].point += -10
                     }
                     resp.delete()
                     if(position == listJoin.length-1){
@@ -440,10 +447,11 @@ function startGames(firstRound,msg,listJoin,position,kata){
                             if(listJoin[position].life == 0 && position != listJoin.length-1) position++
                         }
                     }
-                    startGames(false,msg,listJoin,position,kata)
+                    listKata.push(kata.kata)
+                    startGames(false,msg,listJoin,position,kata,listKata)
                 }
             });
-            MessCollector.on('collect', m => {
+            MessCollector.on('collect', async m => {
                 let string = m.content.toString()
                 console.log(string)
                 countMsgLength = m.content.split("").length 
@@ -511,14 +519,27 @@ function startGames(firstRound,msg,listJoin,position,kata){
                             console.log(error)
                         })  
                     }
-                    let found = dbclient.search(m.content)
-                    if(!found){
-                        getKBBI(m.content)
-                    }else{
-                        kata = found
-                        correct = true
-                        MessCollector.stop()
+                    var check = (f) => {
+                        if(f==null){
+                            getKBBI(m.content)
+                        }else{
+                            console.log(f)
+                            kata = f
+                            correct = true
+                            MessCollector.stop()
+                        }
                     }
+                    dbclient.search(m.content,check)
+                    // let found = await dbclient.search(m.content)
+                    // console.log(found)
+                    // if(!found){
+                    //     getKBBI(m.content)
+                    // }else{
+                    //     console.log(found)
+                    //     kata = found
+                    //     correct = true
+                    //     MessCollector.stop()
+                    // }
                 }else{
                     msg.reply("Kata harus lebih dari 4 huruf!").then(r=>r.delete({timeout:3000}))
                 }
@@ -569,9 +590,13 @@ function startGames(firstRound,msg,listJoin,position,kata){
                 author: {
                     name: "Paya sambung kata 💦"
                 },
-                title: "'**"+kata.kata.toUpperCase()+"  **+"+kata.point+"**",
-                description: kata.desc+"* (sumber: kateglo.com*)",
+                title: "'**"+kata.kata.toUpperCase()+"**  **+"+kata.point+"**"+" (***"+kata.last_sukuKata.toUpperCase()+"***)",
+                description: kata.desc+"*(sumber:kateglo.com)*",
                     fields: [{
+                        name: "Giliran",
+                        value: giliran
+                    },
+                    {
                         name: "Daftar pemain aktif",
                         value: players
                     },
@@ -597,7 +622,7 @@ function startGames(firstRound,msg,listJoin,position,kata){
                     }
                 }
                 const collector = resp.createReactionCollector(filters, {});
-                let vocal = ['a','i','u','e','0']
+                let vocal = ['a','i','u','e','o']
                 let abjad = ['b','c','d','j','f','g','h','k','l','m','n','p','r','s','t','v','w','x','y','z']
                 collector.on('collect', async reaction => {
                     listJoin[position].reRoll--
@@ -607,18 +632,18 @@ function startGames(firstRound,msg,listJoin,position,kata){
 
                     let akhiran = abjad[p1]+vocal[p2]+abjad[p3]
                     kata = {
-                        kata: "telah di re-roll",
+                        kata: "Telah di re-roll",
                         last_sukuKata: akhiran,
                         desc: "Silahkan cari kata dengan awal seperti diatas!",
                         point: 0
                     }
                     reroll = true
-                    MessCollector.stop()
                     listJoin[position].point += -5
+                    MessCollector.stop()
                     collector.stop()
                 })
                 const filter = m => {
-                    if(m.member.id === listJoin[position].id && m.content.startsWith(kata.last_sukuKata)) return true
+                    if(m.member.id === listJoin[position].id && m.content.toLowerCase().startsWith(kata.last_sukuKata)) return true
                 };
                 const MessCollector = resp.channel.createMessageCollector(filter, time);
     
@@ -628,7 +653,9 @@ function startGames(firstRound,msg,listJoin,position,kata){
                         if(!pending){
                             if(!correct){
                                 listJoin[position].life--
-                                //listJoin[position].point += -5
+                                listJoin[position].point += -10
+                            }else{
+                                listKata.push(kata.kata)
                             }
                             resp.delete()
                             
@@ -641,61 +668,89 @@ function startGames(firstRound,msg,listJoin,position,kata){
                                     if(listJoin[position].life == 0 && position != listJoin.length-1) position++
                                 }
                             }
-                            startGames(false,msg,listJoin,position,kata)
+                            listKata.push(kata.kata)
+                            startGames(false,msg,listJoin,position,kata,listKata)
                         }
                     }else{
                         resp.delete()
 
-                        startGames(false,msg,listJoin,position,kata)
+                        startGames(false,msg,listJoin,position,kata,listKata)
                     }
                 });
-                MessCollector.on('collect', m => {
-                    const getKBBI = async (query) => {            
-                        pending = true
-                        await axios(`https://kateglo.com/api.php?format=json&phrase=${query}`)
-                        .then(response => {
-                            pending = false
-                            if(response.data.kateglo){
-                                if(response.data.kateglo.actual_phrase){
-                                    m.reply("Maaf kata tidak ditemukan").then(ms=> ms.delete({timeout:2000}))
-                                }else{
-                                    var lastSuku
-                                    let arrPhrase = response.data.kateglo.phrase.split("")
-                                    let lastPointer = arrPhrase.length - 1
-                                    if(arrPhrase[lastPointer].toLowerCase() === "a" || arrPhrase[lastPointer].toLowerCase() === "i" || arrPhrase[lastPointer].toLowerCase() === "u" || arrPhrase[lastPointer].toLowerCase() === "e" || arrPhrase[lastPointer].toLowerCase() === "o"){
-                                        lastPointer--
-                                        if(!(arrPhrase[lastPointer].toLowerCase() === "a" || arrPhrase[lastPointer].toLowerCase() === "i" || arrPhrase[lastPointer].toLowerCase() === "u" || arrPhrase[lastPointer].toLowerCase() === "e" || arrPhrase[lastPointer].toLowerCase() === "o")){
-                                            lastSuku = arrPhrase[lastPointer]+arrPhrase[lastPointer+1]
-                                        }else{
-                                            lastSuku = arrPhrase[lastPointer-1]+arrPhrase[lastPointer]+arrPhrase[lastPointer+1]
-                                        }
+                MessCollector.on('collect', async m => {
+                    let sudahdipakai = false
+                    listKata.forEach(item=>{
+                        //console.log(item+" -- "+m.content)
+                        if(item.toLowerCase() === m.content.toLowerCase()) sudahdipakai = true
+                    })
+                    console.log(sudahdipakai)
+                    if(!sudahdipakai){
+
+                        const getKBBI = async (query) => {            
+                            pending = true
+                            await axios(`https://kateglo.com/api.php?format=json&phrase=${query}`)
+                            .then(response => {
+                                pending = false
+                                if(response.data.kateglo){
+                                    if(response.data.kateglo.actual_phrase){
+                                        m.reply("Maaf kata tidak ditemukan").then(ms=> ms.delete({timeout:2000}))
                                     }else{
-                                        lastPointer--
-                                        if(!(arrPhrase[lastPointer].toLowerCase() === "a" || arrPhrase[lastPointer].toLowerCase() === "i" || arrPhrase[lastPointer].toLowerCase() === "u" || arrPhrase[lastPointer].toLowerCase() === "e" || arrPhrase[lastPointer].toLowerCase() === "o")){
-                                            lastSuku = arrPhrase[lastPointer-2]+arrPhrase[lastPointer-1]+arrPhrase[lastPointer]+arrPhrase[lastPointer+1]
+                                        var lastSuku
+                                        let arrPhrase = response.data.kateglo.phrase.split("")
+                                        let lastPointer = arrPhrase.length - 1
+                                        if(arrPhrase[lastPointer].toLowerCase() === "a" || arrPhrase[lastPointer].toLowerCase() === "i" || arrPhrase[lastPointer].toLowerCase() === "u" || arrPhrase[lastPointer].toLowerCase() === "e" || arrPhrase[lastPointer].toLowerCase() === "o"){
+                                            lastPointer--
+                                            if(!(arrPhrase[lastPointer].toLowerCase() === "a" || arrPhrase[lastPointer].toLowerCase() === "i" || arrPhrase[lastPointer].toLowerCase() === "u" || arrPhrase[lastPointer].toLowerCase() === "e" || arrPhrase[lastPointer].toLowerCase() === "o")){
+                                                lastSuku = arrPhrase[lastPointer]+arrPhrase[lastPointer+1]
+                                            }else{
+                                                lastSuku = arrPhrase[lastPointer-1]+arrPhrase[lastPointer]+arrPhrase[lastPointer+1]
+                                            }
                                         }else{
                                             lastPointer--
                                             if(!(arrPhrase[lastPointer].toLowerCase() === "a" || arrPhrase[lastPointer].toLowerCase() === "i" || arrPhrase[lastPointer].toLowerCase() === "u" || arrPhrase[lastPointer].toLowerCase() === "e" || arrPhrase[lastPointer].toLowerCase() === "o")){
-                                                lastSuku = arrPhrase[lastPointer]+arrPhrase[lastPointer+1]+arrPhrase[lastPointer+2]
+                                                lastSuku = arrPhrase[lastPointer-2]+arrPhrase[lastPointer-1]+arrPhrase[lastPointer]+arrPhrase[lastPointer+1]
                                             }else{
-                                                lastSuku = arrPhrase[lastPointer+1]+arrPhrase[lastPointer+2]
+                                                lastPointer--
+                                                if(!(arrPhrase[lastPointer].toLowerCase() === "a" || arrPhrase[lastPointer].toLowerCase() === "i" || arrPhrase[lastPointer].toLowerCase() === "u" || arrPhrase[lastPointer].toLowerCase() === "e" || arrPhrase[lastPointer].toLowerCase() === "o")){
+                                                    lastSuku = arrPhrase[lastPointer]+arrPhrase[lastPointer+1]+arrPhrase[lastPointer+2]
+                                                }else{
+                                                    lastSuku = arrPhrase[lastPointer+1]+arrPhrase[lastPointer+2]
+                                                }
                                             }
                                         }
+                                        let description = "n/a"
+                                        if(response.data.kateglo.definition.length != 0) description = response.data.kateglo.definition[0].def_text
+                                        kata = {
+                                            kata: response.data.kateglo.phrase,
+                                            last_sukuKata: lastSuku,
+                                            desc: description,
+                                            point: response.data.kateglo.phrase.split("").length
+                                        }
+                                        dbclient.insert(kata)
+                                        listJoin[position].point += kata.point
+                                        if(!endgame){
+                                            correct = true
+                                            MessCollector.stop()
+                                        }else{
+                                            if(position == listJoin.length-1){
+                                                position = 0
+                                            }else{
+                                                position++
+                                                let starts = position
+                                                for(let i = starts;i<listJoin.length;i++){
+                                                    if(listJoin[position].life == 0 && position != listJoin.length-1) position++
+                                                }
+                                            }
+                                            listKata.push(kata.kata)
+                                            startGames(false,msg,listJoin,position,kata,listKata)
+                                        }
                                     }
-                                    let description = "n/a"
-                                    if(response.data.kateglo.definition.length != 0) description = response.data.kateglo.definition[0].def_text
-                                    kata = {
-                                        kata: response.data.kateglo.phrase,
-                                        last_sukuKata: lastSuku,
-                                        desc: description,
-                                        point: response.data.kateglo.phrase.split("").length
-                                    }
-                                    dbclient.insert(kata)
-                                    listJoin[position].point += kata.point
+                                }else{
                                     if(!endgame){
-                                        correct = true
-                                        MessCollector.stop()
+                                        m.reply("Maaf kata tidak ditemukan").then(ms=> ms.delete({timeout:2000}))
                                     }else{
+                                        listJoin[position].life--
+                                        listJoin[position].point += -10
                                         if(position == listJoin.length-1){
                                             position = 0
                                         }else{
@@ -705,39 +760,36 @@ function startGames(firstRound,msg,listJoin,position,kata){
                                                 if(listJoin[position].life == 0 && position != listJoin.length-1) position++
                                             }
                                         }
-                                        startGames(false,msg,listJoin,position,kata)
+                                        startGames(false,msg,listJoin,position,kata,listKata)
                                     }
                                 }
+                            })
+                            .catch(error => {
+                                console.log(error)
+                            })  
+                        }
+                        var check = (f) => {
+                            if(f==null){
+                                getKBBI(m.content)
                             }else{
-                                if(!endgame){
-                                    m.reply("Maaf kata tidak ditemukan").then(ms=> ms.delete({timeout:2000}))
-                                }else{
-                                    listJoin[position].life--
-                                    //listJoin[position].point += -5
-                                    if(position == listJoin.length-1){
-                                        position = 0
-                                    }else{
-                                        position++
-                                        let starts = position
-                                        for(let i = starts;i<listJoin.length;i++){
-                                            if(listJoin[position].life == 0 && position != listJoin.length-1) position++
-                                        }
-                                    }
-                                    startGames(false,msg,listJoin,position,kata)
-                                }
+                                console.log(f)
+                                kata = f
+                                correct = true
+                                MessCollector.stop()
                             }
-                        })
-                        .catch(error => {
-                            console.log(error)
-                        })  
-                    }
-                    let found = dbclient.search(m.content)
-                    if(!found){
-                        getKBBI(m.content)
+                        }
+                        dbclient.search(m.content,check)
+                        // console.log("ini found "+found)
+                        // if(!found){
+                        //     getKBBI(m.content)
+                        // }else{
+                        //     console.log(found)
+                        //     kata = found
+                        //     correct = true
+                        //     MessCollector.stop()
+                        // }
                     }else{
-                        kata = found
-                        correct = true
-                        MessCollector.stop()
+                        msg.reply("Kata sudah digunakan!").then(r=>r.delete({timeout:1000}))
                     }
                 });
             })

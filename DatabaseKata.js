@@ -37,31 +37,36 @@ class DatabaseKata{
         });
         this.disconnect()
     }
-    search(query){
+    search(query,callback){
+        let rVal = "fucek"
         this.connect()
         db.serialize(function(){
             let sql = `SELECT * FROM kbbi WHERE kata=?`;
         
             db.get(sql, query, (err, row) => {
                 if (err) throw err;
-        
+                let kata
                 if(row){
                     // cetak isi row
-                    let val = {
+                    var val = {
                         kata: row.kata,
                         last_sukuKata: row.last_sukuKata,
                         desc: row.desc,
                         point: row.point
                     }
-                    
-                    return val
+                    kata = val
+                    rVal = "fucek hands up"
+                    //return val
                 } else {
-                    return null
+                    kata = null
+                    //return null
                 }
+                callback(kata)
             });
         
         });
         this.disconnect()
+        return rVal
     }
     disconnect(){
         db.close()
