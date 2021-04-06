@@ -824,4 +824,4 @@ function logicGame(msg,id){
     
 }
 //login to discord use the token
-client.login("NjkzNzMzNjIwNjAyNjM0MjQx.XoikPQ.Ms-fg0i2gdXuO7rsz0yv5nlUKlM");
+client.login("discord-token");
